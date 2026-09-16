@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReadyStore — Ready Ecosystem</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --toolbar-blue:#2196F3;
+    --toolbar-blue-dark:#1976D2;
+    --bg:#EEEEEE;
+    --card:#FFFFFF;
+    --text-primary:#212121;
+    --text-secondary:#757575;
+    --text-hint:#9E9E9E;
+    --accent-green:#0F9D58;
+    --accent-green-dark:#0B8043;
+    --divider:#E0E0E0;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    font-family:'Roboto','Helvetica Neue',Arial,sans-serif;
+    color:var(--text-primary);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .page-view { display: none; }
+  .page-view.active-page { display: block; }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    height:56px;
+    background:var(--toolbar-blue);
+    display:flex;
+    align-items:center;
+    padding:0 16px;
+    box-shadow:0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+    color:#fff;
+  }
+  .toolbar-title{
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:.01em;
+    flex:1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .back-btn{
+    width:40px;height:40px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    cursor:pointer;
+    margin-right:8px;
+    transition:background .15s ease;
+  }
+  .back-btn:hover{background:rgba(255,255,255,.12);}
+
+  /* ===== HERO BANNER ===== */
+  .hero{
+    max-width:1100px;
+    margin:16px auto 0;
+    padding:0 16px;
+  }
+  .hero-banner{
+    background:linear-gradient(135deg,#1A237E 0%,#283593 40%,#3949AB 100%);
+    border-radius:2px;
+    padding:32px 28px;
+    color:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.24), 0 1px 2px rgba(0,0,0,.12);
+    display:flex;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .hero-icon{
+    width:88px;height:88px;
+    border-radius:16px;
+    flex-shrink:0;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+  }
+  .hero-text{flex:1;min-width:220px;}
+  .hero-eyebrow{
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.65);
+    margin:0 0 4px;
+  }
+  .hero-title{
+    font-size:26px;
+    font-weight:400;
+    margin:0 0 6px;
+  }
+  .hero-sub{
+    font-size:14px;
+    font-weight:300;
+    color:rgba(255,255,255,.85);
+    margin:0;
+    max-width:520px;
+    line-height:1.5;
+  }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label{
+    max-width:1100px;
+    margin:28px auto 8px;
+    padding:0 16px;
+    font-size:14px;
+    font-weight:500;
+    color:var(--text-secondary);
+  }
+
+  /* ===== CARD GRID ===== */
+  .grid{
+    max-width:1100px;
+    margin:0 auto;
+    padding:8px 16px 48px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  @media(min-width:700px){
+    .grid{grid-template-columns:1fr 1fr;}
+  }
+  @media(min-width:1000px){
+    .grid{grid-template-columns:1fr 1fr 1fr;}
+  }
+
+  /* ===== APP CARD ===== */
+  .card{
+    background:var(--card);
+    border-radius:2px;
+    box-shadow:0 1px 3px rgba(0,0,0,.24), 0 1px 2px rgba(0,0,0,.12);
+    transition:box-shadow .2s ease;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    text-decoration:none;
+    color:inherit;
+    cursor:pointer;
+  }
+  .card:hover{
+    box-shadow:0 3px 6px rgba(0,0,0,.23), 0 3px 6px rgba(0,0,0,.16);
+  }
+  .card-body{
+    padding:16px;
+    display:flex;
+    gap:14px;
+  }
+  .card-icon{
+    width:56px;height:56px;
+    border-radius:10px;
+    flex-shrink:0;
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+  }
+  .card-headline{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;}
+  .card-name{
+    font-size:16px;
+    font-weight:500;
+    margin:0 0 2px;
+    color:var(--text-primary);
+  }
+  .card-dev{
+    font-size:12px;
+    color:var(--text-secondary);
+    margin:0;
+  }
+  .card-desc{
+    padding:0 16px 12px;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text-secondary);
+    margin:0;
+  }
+  .card-divider{
+    height:1px;
+    background:var(--divider);
+    margin:0 16px;
+  }
+  .card-footer{
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+  }
+
+  .btn-install{
+    appearance:none;
+    border:none;
+    background:var(--accent-green);
+    color:#fff;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:9px 16px;
+    border-radius:2px;
+    cursor:pointer;
+    display:inline-block;
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+    transition:background .15s ease;
+  }
+  .btn-install:hover{
+    background:var(--accent-green-dark);
+  }
+
+  .card.placeholder{
+    align-items:center;
+    justify-content:center;
+    min-height:180px;
+    color:var(--text-hint);
+    font-size:13px;
+    padding:24px;
+    text-align:center;
+    border:1px dashed var(--divider);
+    box-shadow:none;
+    cursor:default;
+  }
+
+  /* ===== APP DETAIL PAGES STYLES ===== */
+  .detail-container {
+    max-width:900px;
+    margin:0 auto;
+    padding-bottom: 60px;
+  }
+  .app-header{
+    background:var(--card);
+    padding:24px 20px;
+    display:flex;
+    gap:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.14);
+    margin-top:16px;
+    align-items: center;
+  }
+  .app-icon{
+    width:72px;height:72px;
+    border-radius:14px;
+    flex-shrink:0;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  .app-header-text{flex:1;min-width:0;}
+  .app-title{
+    font-size:24px;
+    font-weight:400;
+    margin:0 0 4px;
+  }
+  .app-dev{
+    font-size:14px;
+    color:var(--toolbar-blue-dark);
+    margin:0;
+  }
+
+  .download-bar{
+    background:var(--card);
+    padding:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.14);
+    margin-top:1px;
+  }
+  .btn-install-big{
+    appearance:none;
+    border:none;
+    background:var(--accent-green);
+    color:#fff;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:14px 28px;
+    border-radius:2px;
+    cursor:pointer;
+    display:block;
+    width: 100%;
+    text-align: center;
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+    transition:background .15s ease;
+    margin-bottom: 12px;
+  }
+  .btn-install-big:hover{
+    background:var(--accent-green-dark);
+  }
+  .download-hint{
+    font-size:12px;
+    color:var(--text-hint);
+    margin:0;
+  }
+
+  .section{
+    background:var(--card);
+    padding:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.14);
+    margin-top:16px;
+  }
+  .section-title{
+    font-size:15px;
+    font-weight:500;
+    margin:0 0 14px;
+    color:var(--text-primary);
+  }
+  .app-icons-row{
+    display:flex;
+    gap:20px;
+    align-items:center;
+  }
+  .app-icon-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    text-decoration:none;
+  }
+  .app-icon-item img{
+    width:64px;
+    height:64px;
+    border-radius:12px;
+    box-shadow:0 2px 4px rgba(0,0,0,.2);
+  }
+  .app-icon-label{
+    font-size:12px;
+    color:var(--text-secondary);
+    font-weight:500;
+  }
+  .description{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--text-primary);
+    margin:0;
+    white-space:pre-line;
+  }
+  .feature-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .feature-item{
+    display:flex;
+    gap:14px;
+    padding:12px 0;
+    border-bottom:1px solid var(--divider);
+  }
+  .feature-item:last-child{border-bottom:none;}
+  .feature-icon{
+    width:24px;height:24px;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  .feature-text-title{
+    font-size:14px;
+    font-weight:500;
+    margin:0 0 2px;
+  }
+  .feature-text-desc{
+    font-size:13px;
+    color:var(--text-secondary);
+    margin:0;
+    line-height:1.5;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{
+    text-align:center;
+    padding:24px 16px 40px;
+    font-size:12px;
+    color:var(--text-hint);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ГЛАВНАЯ СТРАНИЦА -->
+  <div id="page-home" class="page-view active-page">
+    <div class="toolbar" style="padding-left: 20px;">
+      <div class="toolbar-title">ReadyStore</div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-banner">
+        <img class="hero-icon" src="rw.png" alt="ReadyWARP">
+        <div class="hero-text">
+          <p class="hero-eyebrow">Featured · Ready Ecosystem</p>
+          <h1 class="hero-title">ReadyWARP</h1>
+          <p class="hero-sub">Ускоряй Telegram с помощью локального прокси. Быстрое и стабильное подключение без сложных настроек.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Приложения экосистемы Ready</div>
+
+    <div class="grid">
+      <a class="card" href="javascript:void(0)" onclick="navigateTo('warp')">
+        <div class="card-body">
+          <img class="card-icon" src="rw.png" alt="ReadyWARP icon">
+          <div class="card-headline">
+            <p class="card-name">ReadyWARP</p>
+            <p class="card-dev">Ready Ecosystem</p>
+          </div>
+        </div>
+        <p class="card-desc">Ускорялка Telegram с помощью локального прокси. Настраивайте порт, пул WS и секретный ключ прямо с телефона.</p>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <span class="btn-install">Подробнее</span>
+        </div>
+      </a>
+
+      <a class="card" href="javascript:void(0)" onclick="navigateTo('framework')">
+        <div class="card-body">
+          <img class="card-icon" src="rf.png" alt="ReadyFramework icon">
+          <div class="card-headline">
+            <p class="card-name">ReadyFramework</p>
+            <p class="card-dev">Ready Ecosystem</p>
+          </div>
+        </div>
+        <p class="card-desc">Системный компонент для стабильной работы приложений Ready без скриншотов. Устанавливается один раз и используется всеми приложениями экосистемы.</p>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <span class="btn-install">Подробнее</span>
+        </div>
+      </a>
+
+      <div class="card placeholder">
+        ReadyNS<br>DNS-резолвер экосистемы Ready — скоро
+      </div>
+    </div>
+
+    <div class="footer">ReadyStore · ReadyWARP и другие приложения экосистемы Ready</div>
+  </div>
+
+  <!-- СТРАНИЦА: ReadyWARP -->
+  <div id="page-warp" class="page-view">
+    <div class="toolbar">
+      <div class="back-btn" onclick="navigateTo('home')" aria-label="Назад">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="white"/>
+        </svg>
+      </div>
+      <div class="toolbar-title">ReadyWARP</div>
+    </div>
+
+    <div class="detail-container">
+      <div class="app-header">
+        <img class="app-icon" src="rw.png" alt="ReadyWARP">
+        <div class="app-header-text">
+          <h1 class="app-title">ReadyWARP</h1>
+          <p class="app-dev">Ready Ecosystem</p>
+        </div>
+      </div>
+
+      <div class="download-bar">
+        <button class="btn-install-big" id="btn-warp" onclick="startDownload('btn-warp', 'tg.apk')">Скачать APK</button>
+        <p class="download-hint">Файл загрузится напрямую с сайта. Установка из неизвестных источников должна быть разрешена в настройках Android. Для стабильной работы также рекомендуется установить <a href="javascript:void(0)" onclick="navigateTo('framework')" style="color:var(--toolbar-blue-dark);">ReadyFramework</a>.</p>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Компоненты экосистемы</p>
+        <div class="app-icons-row">
+          <a class="app-icon-item" href="javascript:void(0)" onclick="navigateTo('framework')">
+            <img src="rf.png" alt="ReadyFramework">
+            <span class="app-icon-label">ReadyFramework</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Описание</p>
+        <p class="description">ReadyWARP — это удобная ускорялка Telegram с помощью локального прокси, являющаяся частью экосистемы Ready.
+
+Приложение позволяет быстро настраивать порт, Cloudflare CDN, пул WS и секретный ключ для стабильного и быстрого соединения с мессенджером в один клик.
+
+ReadyWARP разрабатывается как самостоятельный компонент и одновременно как часть более крупной системы Ready, куда также входят ReadyNS (персональный DNS-резолвер) и ReadyLink (медиахаб для устройств).</p>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Возможности</p>
+        <ul class="feature-list">
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#E8F5E9"/><path d="M9 12l2 2 4-4" stroke="#0F9D58" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="feature-text-title">Ускорение Telegram</p>
+              <p class="feature-text-desc">Стабильное соединение и высокая скорость работы мессенджера через локальный прокси.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#E3F2FD"/><path d="M12 7v5l3 3" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="feature-text-title">Гибкая настройка</p>
+              <p class="feature-text-desc">Настройка портов, пула WebSocket и генерация секретных ключей для подключения.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#FFF3E0"/><path d="M12 8v4M12 16h.01" stroke="#F57C00" stroke-width="2" stroke-linecap="round"/></svg>
+            <div>
+              <p class="feature-text-title">Интеграция в Telegram</p>
+              <p class="feature-text-desc">Моментальное применение прокси в мессенджер одной кнопкой или копирование готовой ссылки.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#F3E5F5"/><rect x="8" y="8" width="8" height="8" rx="1.5" stroke="#8E24AA" stroke-width="2"/></svg>
+            <div>
+              <p class="feature-text-title">Интеграция с экосистемой Ready</p>
+              <p class="feature-text-desc">Работает совместно с ReadyNS и ReadyLink как единый набор инструментов для связи между устройствами.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer">ReadyStore · ReadyWARP — часть экосистемы Ready</div>
+    </div>
+  </div>
+
+  <!-- СТРАНИЦА: ReadyFramework -->
+  <div id="page-framework" class="page-view">
+    <div class="toolbar">
+      <div class="back-btn" onclick="navigateTo('home')" aria-label="Назад">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="white"/>
+        </svg>
+      </div>
+      <div class="toolbar-title">ReadyFramework</div>
+    </div>
+
+    <div class="detail-container">
+      <div class="app-header">
+        <img class="app-icon" src="rf.png" alt="ReadyFramework">
+        <div class="app-header-text">
+          <h1 class="app-title">ReadyFramework</h1>
+          <p class="app-dev">Ready Ecosystem</p>
+        </div>
+      </div>
+
+      <div class="download-bar">
+        <button class="btn-install-big" id="btn-framework" onclick="startDownload('btn-framework', 'rdf.apk')">Скачать APK</button>
+        <p class="download-hint">Файл загрузится напрямую с сайта. Установка из неизвестных источников должна быть разрешена в настройках Android. ReadyFramework — общий компонент, его достаточно установить один раз для всех приложений Ready.</p>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Описание</p>
+        <p class="description">ReadyFramework — системный компонент экосистемы Ready, обеспечивающий стабильную фоновую работу приложений Ready без скриншотов интерфейса — у него их нет, потому что у него нет собственного экрана.
+
+Framework устанавливается один раз и используется всеми приложениями Ready (ReadyWARP, ReadyNS, ReadyLink) как общий слой для стабильного соединения в фоне, сохранения состояния между перезапусками системы и корректной работы после автозагрузки устройства.
+
+Framework не имеет собственного пользовательского интерфейса — он работает в фоне и не требует настройки после установки.</p>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Возможности</p>
+        <ul class="feature-list">
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#E8F5E9"/><path d="M9 12l2 2 4-4" stroke="#0F9D58" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="feature-text-title">Стабильная фоновая работа</p>
+              <p class="feature-text-desc">Приложения Ready продолжают работать в фоне без обрывов, даже при агрессивном энергосбережении системы.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#E3F2FD"/><path d="M12 7v5l3 3" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="feature-text-title">Автозапуск после перезагрузки</p>
+              <p class="feature-text-desc">Сохраняет и восстанавливает состояние приложений Ready после перезагрузки устройства.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#FFF3E0"/><path d="M12 8v4M12 16h.01" stroke="#F57C00" stroke-width="2" stroke-linecap="round"/></svg>
+            <div>
+              <p class="feature-text-title">Общий компонент для всех приложений</p>
+              <p class="feature-text-desc">Устанавливается один раз и используется всеми приложениями экосистемы Ready — отдельно настраивать каждое не нужно.</p>
+            </div>
+          </li>
+          <li class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#F3E5F5"/><rect x="8" y="8" width="8" height="8" rx="1.5" stroke="#8E24AA" stroke-width="2"/></svg>
+            <div>
+              <p class="feature-text-title">Работает без интерфейса</p>
+              <p class="feature-text-desc">Минимальный расход ресурсов: нет экранов, анимаций и лишних процессов — только системная логика.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer">ReadyStore · ReadyFramework — часть экосистемы Ready</div>
+    </div>
+  </div>
+
+  <script>
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => {
+        el.classList.remove('active-page');
+      });
+      document.getElementById('page-' + pageId).classList.add('active-page');
+      window.scrollTo(0, 0);
+    }
+
+    function startDownload(btnId, apkUrl) {
+      const btn = document.getElementById(btnId);
+      if (btn.dataset.loading === "true") return;
+      
+      btn.dataset.loading = "true";
+      btn.style.opacity = "0.8";
+      btn.textContent = "Получение с сервера...";
+
+      setTimeout(() => {
+        btn.textContent = "Установка...";
+        
+        const a = document.createElement('a');
+        a.href = apkUrl;
+        a.download = apkUrl;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setTimeout(() => {
+          btn.textContent = "Скачать APK";
+          btn.style.opacity = "1";
+          btn.dataset.loading = "false";
+        }, 2000);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
+
